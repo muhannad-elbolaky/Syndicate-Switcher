@@ -1,5 +1,5 @@
 import axios from "axios";
-import { token } from "./settings.json";
+import { token, username } from "./settings.json";
 import { items } from "./items.json";
 import { NEW_LOKA, RED_VEIL, THE_PERRIN_SEQUENCE } from "./mods.json";
 import inquirer from "inquirer";
@@ -124,7 +124,7 @@ const DELAY = 500;
 	console.log(`\n- Preparing finished! -\n`);
 
 	// ! remove every thing
-	const orders = await market.get("profile/Major.Amari/orders").then((orders) => {
+	const orders = await market.get(`profile/${username}/orders`).then((orders) => {
 		return orders.data.payload.sell_orders;
 	});
 	for (const order of orders) {
@@ -133,7 +133,9 @@ const DELAY = 500;
 			console.log("❌ " + order.item.en.item_name + " \x1b[31mdeleted\x1b[0m!");
 			const del = async () => {
 				await market.delete("profile/orders/" + order.id).catch(async (err) => {
-					del();
+					setTimeout(async () => {
+						await del();
+					}, 1000);
 					console.log("failed 503 and retrying");
 				});
 			};
@@ -156,7 +158,10 @@ const DELAY = 500;
 					rank: 0,
 				})
 				.catch(async (err) => {
-					add();
+					setTimeout(async () => {
+						await add();
+					}, 1000);
+					console.log("failed 503 and retrying");
 				});
 		};
 		add();
