@@ -1,10 +1,13 @@
+require("dotenv").config();
 import axios from "axios";
-import { token, username } from "./settings.json";
-import { items } from "./items.json";
-import { NEW_LOKA, RED_VEIL, THE_PERRIN_SEQUENCE } from "./mods.json";
 import inquirer from "inquirer";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
 import fuzzy from "fuzzy";
+import { items } from "./data/items.json";
+import { authorization, username } from "./data/token_data.json";
+import { NEW_LOKA, RED_VEIL, THE_PERRIN_SEQUENCE, ARBITERS_OF_HEXIS } from "./data/mods.json";
+import { writeFile } from "fs/promises";
+import { resolve } from "path";
 
 const BASE_URL = "https://api.warframe.market/v1";
 const DELAY = 500;
@@ -30,6 +33,7 @@ const DELAY = 500;
 			...NEW_LOKA.map((a) => a.item_name),
 			...RED_VEIL.map((a) => a.item_name),
 			...THE_PERRIN_SEQUENCE.map((a) => a.item_name),
+			...ARBITERS_OF_HEXIS.map((a) => a.item_name),
 		]);
 
 		const searchAlgorithm = (answers, input = "") => {
@@ -56,6 +60,7 @@ const DELAY = 500;
 			if (RED_VEIL.find((m) => m.item_name === mod)) syndis.push("\x1b[31mRed Veil\x1b[0m");
 			if (THE_PERRIN_SEQUENCE.find((m) => m.item_name === mod))
 				syndis.push("\x1b[36mThe Perrin Sequence\x1b[0m");
+			if (ARBITERS_OF_HEXIS.find((m) => m.item_name === mod)) syndis.push("\x1b[33mArbiters Of Hexis\x1b[0m");
 			console.log(syndis.join(" - "));
 			console.log("\n");
 			searchMods();
@@ -83,6 +88,10 @@ const DELAY = 500;
 				name: "The Perrin Sequence",
 				value: "THE_PERRIN_SEQUENCE",
 			},
+			{
+				name: "Arbiters Of Hexis",
+				value: "ARBITERS_OF_HEXIS",
+			},
 		],
 	});
 
@@ -95,7 +104,7 @@ const DELAY = 500;
 			accept: "application/json",
 			platform: "pc",
 			language: "en",
-			authorization: `JWT ${token}`,
+			authorization,
 		},
 	});
 
@@ -115,18 +124,64 @@ const DELAY = 500;
 			`✨ Added \x1b[33m${THE_PERRIN_SEQUENCE.length}\x1b[36m The Perrin Sequence\x1b[0m mods to the queue!`
 		);
 	}
+	if (syndicates.includes("ARBITERS_OF_HEXIS")) {
+		modsToAdd = modsToAdd.concat(ARBITERS_OF_HEXIS.map((mod) => mod.id));
+		console.log(
+			`✨ Added \x1b[33m${ARBITERS_OF_HEXIS.length}\x1b[33m Arbiters Of Hexis\x1b[0m mods to the queue!`
+		);
+	}
 	modsToAdd = removeDuplicates(modsToAdd);
 	const syndiArray = [
 		...NEW_LOKA.map((el) => el.id),
 		...RED_VEIL.map((el) => el.id),
 		...THE_PERRIN_SEQUENCE.map((el) => el.id),
+		...ARBITERS_OF_HEXIS.map((el) => el.id),
 	];
 	console.log(`\n- Preparing finished! -\n`);
 
 	// ! remove every thing
-	const orders = await market.get(`profile/${username}/orders`).then((orders) => {
-		return orders.data.payload.sell_orders;
-	});
+	const orders = await market
+		.get(`profile/${username}/orders`)
+		.then((orders) => {
+			return orders.data.payload.sell_orders;
+		})
+		.catch(async (err) => {
+			console.log("\x1b[31m -- Error: No token found, \x1b[33m Don't worry I'll create one... --");
+
+			const signin = await axios({
+				method: "post",
+				url: `${BASE_URL}/auth/signin`,
+				data: {
+					auth_type: "header",
+					email: process.env.EMAIL,
+					password: process.env.PASSWORD,
+				},
+				headers: {
+					Authorization: "JWT",
+					language: "en",
+					accept: "application/json",
+					platform: "pc",
+					auth_type: "header",
+				},
+			});
+			const { authorization } = signin.headers;
+			const username = signin.data.payload.user.ingame_name;
+			await writeFile(
+				resolve(__dirname, "./data/token_data.json"),
+				JSON.stringify(
+					{
+						authorization,
+						username,
+					},
+					null,
+					2
+				)
+			);
+
+			console.log("\x1b[32m -- Done! please try again it should work fine this time -- \x1b[0m");
+			process.exit();
+		});
+
 	for (const order of orders) {
 		if (syndiArray.includes(order.item.id)) {
 			await timer(DELAY);
@@ -168,17 +223,3 @@ const DELAY = 500;
 	}
 	console.log(`\n- Adding finished! -\n`);
 })();
-
-// const items = await market.get("/items");
-// console.log(items.data.payload);
-
-// JSON.stringify(items.data.payload);
-
-// fs.writeFile("output.json", JSON.stringify(items.data.payload), "utf8", function (err) {
-// 	if (err) {
-// 		console.log("An error occured while writing JSON Object to File.");
-// 		return console.log(err);
-// 	}
-
-// 	console.log("JSON file has been saved.");
-// });

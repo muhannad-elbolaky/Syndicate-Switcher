@@ -844,5 +844,257 @@
             "id": "5911f11d97a0add8e9d5da4e",
             "url_name": "voltage_sequence"
         }
+    ],
+    "ARBITERS_OF_HEXIS": [
+        {
+            "item_name": "Gilded Truth",
+            "url_name": "gilded_truth",
+            "id": "54a74454e779892d5e515664"
+        },
+        {
+            "item_name": "Blade Of Truth",
+            "id": "54a74454e779892d5e515645",
+            "url_name": "blade_of_truth"
+        },
+        {
+            "item_name": "Avenging Truth",
+            "id": "5911f11d97a0add8e9d5da51",
+            "url_name": "avenging_truth"
+        },
+        {
+            "item_name": "Stinging Truth",
+            "id": "54a74455e779892d5e5156d2",
+            "url_name": "stinging_truth"
+        },
+        {
+            "item_name": "Seeking Shuriken",
+            "id": "54e0c9eee7798903744178aa",
+            "url_name": "seeking_shuriken"
+        },
+        {
+            "item_name": "Smoke Shadow",
+            "id": "54a74454e779892d5e515685",
+            "url_name": "smoke_shadow"
+        },
+        {
+            "item_name": "Fatal Teleport",
+            "id": "5740c1999d238d4a03d2851a",
+            "url_name": "fatal_teleport"
+        },
+        {
+            "item_name": "Rising Storm",
+            "id": "5526aec1e779896af9418264",
+            "url_name": "rising_storm"
+        },
+        {
+            "item_name": "Endless Lullaby",
+            "id": "5e4145917b0275011bc5b7d1",
+            "url_name": "endless_lullaby"
+        },
+        {
+            "item_name": "Reactive Storm",
+            "id": "5e4145917b0275011bc5b7d2",
+            "url_name": "reactive_storm"
+        },
+        {
+            "item_name": "Duality",
+            "id": "56b656e0ef0390c7e4006383",
+            "url_name": "duality"
+        },
+        {
+            "item_name": "Calm & Frenzy",
+            "id": "56b656e5ef0390c7e4006384",
+            "url_name": "calm_and_frenzy"
+        },
+        {
+            "item_name": "Peaceful Provocation",
+            "id": "56b656edef0390c7e4006385",
+            "url_name": "peaceful_provocation"
+        },
+        {
+            "item_name": "Energy Transfer",
+            "id": "5ada1ab4b2b6a80bb33793f6",
+            "url_name": "energy_transfer"
+        },
+        {
+            "item_name": "Surging Dash",
+            "id": "54e0c9eee7798903744178a8",
+            "url_name": "surging_dash"
+        },
+        {
+            "item_name": "Radiant Finish",
+            "id": "554d3af4e77989420d3de2a6",
+            "url_name": "radiant_finish"
+        },
+        {
+            "item_name": "Furious Javelin",
+            "id": "54a74455e779892d5e5156cb",
+            "url_name": "furious_javelin"
+        },
+        {
+            "item_name": "Chromatic Blade",
+            "id": "59385f6716efa3a742b15f60",
+            "url_name": "chromatic_blade"
+        },
+        {
+            "item_name": "Mending Splinters",
+            "id": "5b91784d0566c80216658ce7",
+            "url_name": "mending_splinters"
+        },
+        {
+            "item_name": "Spectrosiphon",
+            "id": "5c3892672cc6ce00f238139d",
+            "url_name": "spectrosiphon"
+        },
+        {
+            "item_name": "Mach Crash",
+            "id": "5fb84768c34da3004797d550",
+            "url_name": "mach_crash"
+        },
+        {
+            "item_name": "Thermal Transfer",
+            "id": "6214e88fe3c4660048a8b97e",
+            "url_name": "thermal_transfer"
+        },
+        {
+            "item_name": "Tribunal",
+            "id": "5ea087d1c160d001303f9ed7",
+            "url_name": "tribunal"
+        },
+        {
+            "item_name": "Warding Thurible",
+            "id": "5b50a3ad3a84fd02a782324c",
+            "url_name": "warding_thurible"
+        },
+        {
+            "item_name": "Lasting Covenant",
+            "id": "5a6b495b7f2bca025fde2b57",
+            "url_name": "lasting_covenant"
+        },
+        {
+            "item_name": "Desiccation's Curse",
+            "id": "5c3892672cc6ce00f238139c",
+            "url_name": "desiccations_curse"
+        },
+        {
+            "item_name": "Elemental Sandstorm",
+            "id": "57c73be094b4b0f159ab5e14",
+            "url_name": "elemental_sandstorm"
+        },
+        {
+            "item_name": "Negation Swarm",
+            "id": "58f0ee99aa4b70452a173071",
+            "url_name": "negation_swarm"
+        },
+        {
+            "item_name": "Rift Haven",
+            "id": "5ce7fd87d23a3b00908c420e",
+            "url_name": "rift_haven"
+        },
+        {
+            "item_name": "Rift Torrent",
+            "id": "54e0c9eee7798903744178ab",
+            "url_name": "rift_torrent"
+        },
+        {
+            "item_name": "Cataclysmic Continuum",
+            "id": "5615432cb66f8371035bfa33",
+            "url_name": "cataclysmic_continuum"
+        },
+        {
+            "item_name": "Savior Decoy",
+            "id": "584470092c2ada00787e0888",
+            "url_name": "savior_decoy"
+        },
+        {
+            "item_name": "Hushed Invisibility",
+            "id": "5526aec1e779896af9418260",
+            "url_name": "hushed_invisibility"
+        },
+        {
+            "item_name": "Safeguard Switch",
+            "id": "54a74455e779892d5e5156c3",
+            "url_name": "safeguard_switch"
+        },
+        {
+            "item_name": "Irradiating Disarm",
+            "id": "54e0c9eee7798903744178b0",
+            "url_name": "irradiating_disarm"
+        },
+        {
+            "item_name": "Hall Of Malevolence",
+            "id": "54a74454e779892d5e5155e4",
+            "url_name": "hall_of_malevolence"
+        },
+        {
+            "item_name": "Explosive Legerdemain",
+            "id": "5526aec0e779896af9418258",
+            "url_name": "explosive_legerdemain"
+        },
+        {
+            "item_name": "Total Eclipse",
+            "id": "54e0c9eee7798903744178ac",
+            "url_name": "total_eclipse"
+        },
+        {
+            "item_name": "Mind Freak",
+            "id": "54e644ffe779897594fa68ce",
+            "url_name": "mind_freak"
+        },
+        {
+            "item_name": "Pacifying Bolts",
+            "id": "54a74454e779892d5e5155b4",
+            "url_name": "pacifying_bolts"
+        },
+        {
+            "item_name": "Chaos Sphere",
+            "id": "5615432bb66f8371035bfa26",
+            "url_name": "chaos_sphere"
+        },
+        {
+            "item_name": "Assimilate",
+            "id": "57c20990022d3f62c0d81aa7",
+            "url_name": "assimilate"
+        },
+        {
+            "item_name": "Repair Dispensary",
+            "id": "60cca19052f60b004dfea04b",
+            "url_name": "repair_dispensary"
+        },
+        {
+            "item_name": "Shock Trooper",
+            "id": "54a74454e779892d5e515658",
+            "url_name": "shock_trooper"
+        },
+        {
+            "item_name": "Shocking Speed",
+            "id": "54e644ffe779897594fa68d3",
+            "url_name": "shocking_speed"
+        },
+        {
+            "item_name": "Transistor Shield",
+            "id": "59385f6716efa3a742b15f62",
+            "url_name": "transistor_shield"
+        },
+        {
+            "item_name": "Capacitance",
+            "id": "5526aec0e779896af941825e",
+            "url_name": "capacitance"
+        },
+        {
+            "item_name": "Celestial Stomp",
+            "id": "576459b43ae92d545fd1e7b8",
+            "url_name": "celestial_stomp"
+        },
+        {
+            "item_name": "Enveloping Cloud",
+            "id": "5b91784d0566c80216658ce9",
+            "url_name": "enveloping_cloud"
+        },
+        {
+            "item_name": "Primal Rage",
+            "id": "576459af3ae92d545fd1e7b7",
+            "url_name": "primal_rage"
+        }
     ]
 }
