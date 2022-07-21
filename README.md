@@ -5,7 +5,7 @@ This is a Simple tool to help you switch between syndicates mods in your profile
 ### Table of Content
 
 - [Syndicate switcher](#syndicate-switcher)
-    - [Table of Content](#table-of-content)
+  - [Table of Content](#table-of-content)
 - [Requirement](#requirement)
 - [installation](#installation)
 - [how to use it?](#how-to-use-it)
@@ -54,4 +54,4 @@ Controls
 - Space to choose
 - Enter to confirm
 
-![image](https://i.imgur.com/4LanCJX.gif)
+![image](https://i.imgur.com/HFzO7Jv.gif)
