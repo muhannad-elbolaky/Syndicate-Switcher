@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node build/index.js",
-    "build": "npm ci && rimraf build && tsc"
+    "build:script": "npm ci && rimraf build && tsc",
+    "build": "tsc"
   },
   "dependencies": {
     "axios": "^0.26.1",
