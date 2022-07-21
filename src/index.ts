@@ -9,9 +9,6 @@ import { NEW_LOKA, RED_VEIL, THE_PERRIN_SEQUENCE, ARBITERS_OF_HEXIS } from "./da
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
 
-const BASE_URL = "https://api.warframe.market/v1";
-const DELAY = 500;
-
 (async () => {
 	console.clear();
 	// ? Utils
@@ -97,7 +94,7 @@ const DELAY = 500;
 
 	// ? Create manager
 	const market = axios.create({
-		baseURL: BASE_URL,
+		baseURL: process.env.BASE_URL,
 		timeout: 1000,
 		headers: {
 			"content-type": "application/json",
@@ -146,48 +143,19 @@ const DELAY = 500;
 			return orders.data.payload.sell_orders;
 		})
 		.catch(async (err) => {
-			console.log("\x1b[31m -- Error: No token found, \x1b[33m Don't worry I'll create one... --");
-
-			const signin = await axios({
-				method: "post",
-				url: `${BASE_URL}/auth/signin`,
-				data: {
-					auth_type: "header",
-					email: process.env.EMAIL,
-					password: process.env.PASSWORD,
-				},
-				headers: {
-					Authorization: "JWT",
-					language: "en",
-					accept: "application/json",
-					platform: "pc",
-					auth_type: "header",
-				},
-			});
-			const { authorization } = signin.headers;
-			const username = signin.data.payload.user.ingame_name;
-			await writeFile(
-				resolve(__dirname, "./data/token_data.json"),
-				JSON.stringify(
-					{
-						authorization,
-						username,
-					},
-					null,
-					2
-				)
-			);
-
-			console.log("\x1b[32m -- Done! please try again it should work fine this time -- \x1b[0m");
-			process.exit();
+			await createToken();
 		});
 
 	for (const order of orders) {
 		if (syndiArray.includes(order.item.id)) {
-			await timer(DELAY);
+			await timer(process.env.DELAY);
 			console.log("❌ " + order.item.en.item_name + " \x1b[31mdeleted\x1b[0m!");
 			const del = async () => {
 				await market.delete("profile/orders/" + order.id).catch(async (err) => {
+					console.log(err.response.status);
+					if (err.response.status === 401) {
+						await createToken();
+					}
 					setTimeout(async () => {
 						await del();
 					}, 1000);
@@ -200,7 +168,7 @@ const DELAY = 500;
 	console.log(`\n- Deleting finished! -\n`);
 	// ? Add new cards
 	for (const mod of modsToAdd) {
-		await timer(DELAY);
+		await timer(process.env.DELAY);
 		console.log("✅ " + items.find((item) => item.id === mod)?.item_name + " \x1b[32madded\x1b[0m!");
 		const add = async () => {
 			await market
@@ -213,6 +181,9 @@ const DELAY = 500;
 					rank: 0,
 				})
 				.catch(async (err) => {
+					if (err.response.status === 401) {
+						await createToken();
+					}
 					setTimeout(async () => {
 						await add();
 					}, 1000);
@@ -223,3 +194,40 @@ const DELAY = 500;
 	}
 	console.log(`\n- Adding finished! -\n`);
 })();
+
+async function createToken() {
+	console.log("\x1b[31m -- Error: No token found, \x1b[33m Don't worry I'll create one... --");
+
+	const signin = await axios({
+		method: "post",
+		url: `${process.env.BASE_URL}/auth/signin`,
+		data: {
+			auth_type: "header",
+			email: process.env.EMAIL,
+			password: process.env.PASSWORD,
+		},
+		headers: {
+			Authorization: "JWT",
+			language: "en",
+			accept: "application/json",
+			platform: "pc",
+			auth_type: "header",
+		},
+	});
+	const { authorization } = signin.headers;
+	const username = signin.data.payload.user.ingame_name;
+	await writeFile(
+		resolve(__dirname, "./data/token_data.json"),
+		JSON.stringify(
+			{
+				authorization,
+				username,
+			},
+			null,
+			2
+		)
+	);
+
+	console.log("\x1b[32m -- Done! please try again it should work fine this time -- \x1b[0m");
+	process.exit();
+}
