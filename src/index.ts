@@ -207,7 +207,7 @@ const DELAY = 500;
 				.post("/profile/orders", {
 					order_type: "sell",
 					item_id: mod,
-					platinum: 15,
+					platinum: process.env.PRICE,
 					visible: true,
 					quantity: 1,
 					rank: 0,
