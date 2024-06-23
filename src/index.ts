@@ -4,12 +4,32 @@ import inquirer from "inquirer";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
 import fuzzy from "fuzzy";
 import { items } from "./data/items.json";
-import { authorization, username } from "./data/token_data.json";
 import { NEW_LOKA, RED_VEIL, THE_PERRIN_SEQUENCE, ARBITERS_OF_HEXIS } from "./data/mods.json";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
+import { existsSync, writeFileSync } from "fs";
+
+type TokenData = {
+	authorization: string;
+	username: string;
+};
+let tokenData: TokenData;
 
 (async () => {
+	const tokenFile = resolve(__dirname, "./data/token_data.json");
+
+	if (existsSync(tokenFile)) {
+		tokenData = require("./data/token_data.json");
+	} else {
+		const initialData = {
+			authorization: "",
+			username: "",
+		};
+		writeFileSync(tokenFile, JSON.stringify(initialData, null, 2));
+		await createToken();
+		process.exit(0);
+	}
+
 	console.clear();
 	// ? Utils
 	const timer = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -101,7 +121,7 @@ import { resolve } from "path";
 			accept: "application/json",
 			platform: "pc",
 			language: "en",
-			authorization,
+			authorization: tokenData.authorization,
 		},
 	});
 
@@ -138,7 +158,7 @@ import { resolve } from "path";
 
 	// ! remove every thing
 	const orders = await market
-		.get(`profile/${username}/orders`)
+		.get(`profile/${tokenData.username}/orders`)
 		.then((orders) => {
 			return orders.data.payload.sell_orders;
 		})
