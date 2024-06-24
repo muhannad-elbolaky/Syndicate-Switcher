@@ -4,7 +4,12 @@ import inquirer from "inquirer";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
 import fuzzy from "fuzzy";
 import { items } from "./data/items.json";
-import { NEW_LOKA, RED_VEIL, THE_PERRIN_SEQUENCE, ARBITERS_OF_HEXIS } from "./data/mods.json";
+import {
+	NEW_LOKA,
+	RED_VEIL,
+	THE_PERRIN_SEQUENCE,
+	ARBITERS_OF_HEXIS,
+} from "./data/mods.json";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
 import { existsSync, writeFileSync } from "fs";
@@ -73,11 +78,14 @@ let tokenData: TokenData;
 			console.clear();
 			const syndis: string[] = [];
 			console.log("\n\x1b[33mMod is available in:\x1b[0m\n");
-			if (NEW_LOKA.find((m) => m.item_name === mod)) syndis.push("\x1b[32mNew Loka\x1b[0m");
-			if (RED_VEIL.find((m) => m.item_name === mod)) syndis.push("\x1b[31mRed Veil\x1b[0m");
+			if (NEW_LOKA.find((m) => m.item_name === mod))
+				syndis.push("\x1b[32mNew Loka\x1b[0m");
+			if (RED_VEIL.find((m) => m.item_name === mod))
+				syndis.push("\x1b[31mRed Veil\x1b[0m");
 			if (THE_PERRIN_SEQUENCE.find((m) => m.item_name === mod))
 				syndis.push("\x1b[36mThe Perrin Sequence\x1b[0m");
-			if (ARBITERS_OF_HEXIS.find((m) => m.item_name === mod)) syndis.push("\x1b[33mArbiters Of Hexis\x1b[0m");
+			if (ARBITERS_OF_HEXIS.find((m) => m.item_name === mod))
+				syndis.push("\x1b[33mArbiters Of Hexis\x1b[0m");
 			console.log(syndis.join(" - "));
 			console.log("\n");
 			searchMods();
@@ -129,22 +137,26 @@ let tokenData: TokenData;
 	let modsToAdd: string[] = [];
 	if (syndicates.includes("NEW_LOKA")) {
 		modsToAdd = modsToAdd.concat(NEW_LOKA.map((mod) => mod.id));
-		console.log(`✨ Added \x1b[33m${NEW_LOKA.length}\x1b[32m New Loka\x1b[0m mods to the queue!`);
+		console.log(
+			`✨ Added \x1b[33m${NEW_LOKA.length}\x1b[32m New Loka\x1b[0m mods to the queue!`,
+		);
 	}
 	if (syndicates.includes("RED_VEIL")) {
 		modsToAdd = modsToAdd.concat(RED_VEIL.map((mod) => mod.id));
-		console.log(`✨ Added \x1b[33m${RED_VEIL.length}\x1b[31m Red Veil\x1b[0m mods to the queue!`);
+		console.log(
+			`✨ Added \x1b[33m${RED_VEIL.length}\x1b[31m Red Veil\x1b[0m mods to the queue!`,
+		);
 	}
 	if (syndicates.includes("THE_PERRIN_SEQUENCE")) {
 		modsToAdd = modsToAdd.concat(THE_PERRIN_SEQUENCE.map((mod) => mod.id));
 		console.log(
-			`✨ Added \x1b[33m${THE_PERRIN_SEQUENCE.length}\x1b[36m The Perrin Sequence\x1b[0m mods to the queue!`
+			`✨ Added \x1b[33m${THE_PERRIN_SEQUENCE.length}\x1b[36m The Perrin Sequence\x1b[0m mods to the queue!`,
 		);
 	}
 	if (syndicates.includes("ARBITERS_OF_HEXIS")) {
 		modsToAdd = modsToAdd.concat(ARBITERS_OF_HEXIS.map((mod) => mod.id));
 		console.log(
-			`✨ Added \x1b[33m${ARBITERS_OF_HEXIS.length}\x1b[33m Arbiters Of Hexis\x1b[0m mods to the queue!`
+			`✨ Added \x1b[33m${ARBITERS_OF_HEXIS.length}\x1b[33m Arbiters Of Hexis\x1b[0m mods to the queue!`,
 		);
 	}
 	modsToAdd = removeDuplicates(modsToAdd);
@@ -189,7 +201,11 @@ let tokenData: TokenData;
 	// ? Add new cards
 	for (const mod of modsToAdd) {
 		await timer(process.env.DELAY);
-		console.log("✅ " + items.find((item) => item.id === mod)?.item_name + " \x1b[32madded\x1b[0m!");
+		console.log(
+			"✅ " +
+				items.find((item) => item.id === mod)?.item_name +
+				" \x1b[32madded\x1b[0m!",
+		);
 		const add = async () => {
 			await market
 				.post("/profile/orders", {
@@ -216,7 +232,9 @@ let tokenData: TokenData;
 })();
 
 async function createToken() {
-	console.log("\x1b[31m -- Error: No token found, \x1b[33m Don't worry I'll create one... --");
+	console.log(
+		"\x1b[31m -- Error: No token found, \x1b[33m Don't worry I'll create one... --",
+	);
 
 	const signin = await axios({
 		method: "post",
@@ -244,10 +262,12 @@ async function createToken() {
 				username,
 			},
 			null,
-			2
-		)
+			2,
+		),
 	);
 
-	console.log("\x1b[32m -- Done! please try again it should work fine this time -- \x1b[0m");
+	console.log(
+		"\x1b[32m -- Done! please try again it should work fine this time -- \x1b[0m",
+	);
 	process.exit();
 }
