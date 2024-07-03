@@ -5,6 +5,7 @@ import inquirerPrompt from "inquirer-autocomplete-prompt";
 import fuzzy from "fuzzy";
 import { items } from "./data/items.json";
 import {
+	CHIPPER,
 	NEW_LOKA,
 	RED_VEIL,
 	THE_PERRIN_SEQUENCE,
@@ -13,6 +14,8 @@ import {
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
 import { existsSync, writeFileSync } from "fs";
+
+const BASE_URL = "https://api.warframe.market/v1";
 
 type TokenData = {
 	authorization: string;
@@ -52,6 +55,7 @@ let tokenData: TokenData;
 	console.clear();
 	if (todo) {
 		const array = removeDuplicates([
+			...CHIPPER.map((a) => a.item_name),
 			...NEW_LOKA.map((a) => a.item_name),
 			...RED_VEIL.map((a) => a.item_name),
 			...THE_PERRIN_SEQUENCE.map((a) => a.item_name),
@@ -78,6 +82,8 @@ let tokenData: TokenData;
 			console.clear();
 			const syndis: string[] = [];
 			console.log("\n\x1b[33mMod is available in:\x1b[0m\n");
+			if (CHIPPER.find((m) => m.item_name === mod))
+				syndis.push("\x1b[32mChipper\x1b[0m");
 			if (NEW_LOKA.find((m) => m.item_name === mod))
 				syndis.push("\x1b[32mNew Loka\x1b[0m");
 			if (RED_VEIL.find((m) => m.item_name === mod))
@@ -102,6 +108,10 @@ let tokenData: TokenData;
 		name: "syndicates",
 		choices: [
 			{
+				name: "Chipper",
+				value: "CHIPPER",
+			},
+			{
 				name: "New LOKA",
 				value: "NEW_LOKA",
 			},
@@ -122,7 +132,7 @@ let tokenData: TokenData;
 
 	// ? Create manager
 	const market = axios.create({
-		baseURL: process.env.BASE_URL,
+		baseURL: BASE_URL,
 		timeout: 1000,
 		headers: {
 			"content-type": "application/json",
@@ -135,6 +145,12 @@ let tokenData: TokenData;
 
 	// ! Decide what to show on website
 	let modsToAdd: string[] = [];
+	if (syndicates.includes("CHIPPER")) {
+		modsToAdd = modsToAdd.concat(CHIPPER.map((mod) => mod.id));
+		console.log(
+			`✨ Added \x1b[33m${CHIPPER.length}\x1b[32m Chipper\x1b[0m mods to the queue!`,
+		);
+	}
 	if (syndicates.includes("NEW_LOKA")) {
 		modsToAdd = modsToAdd.concat(NEW_LOKA.map((mod) => mod.id));
 		console.log(
@@ -159,8 +175,10 @@ let tokenData: TokenData;
 			`✨ Added \x1b[33m${ARBITERS_OF_HEXIS.length}\x1b[33m Arbiters Of Hexis\x1b[0m mods to the queue!`,
 		);
 	}
+
 	modsToAdd = removeDuplicates(modsToAdd);
 	const syndiArray = [
+		...CHIPPER.map((el) => el.id),
 		...NEW_LOKA.map((el) => el.id),
 		...RED_VEIL.map((el) => el.id),
 		...THE_PERRIN_SEQUENCE.map((el) => el.id),
@@ -211,9 +229,10 @@ let tokenData: TokenData;
 				.post("/profile/orders", {
 					order_type: "sell",
 					item_id: mod,
-					platinum: process.env.PRICE,
+					platinum:
+						items.find((item) => item.id === mod)?.price || process.env.PRICE,
 					visible: true,
-					quantity: 1,
+					quantity: 7,
 					rank: 0,
 				})
 				.catch(async (err) => {
@@ -238,7 +257,7 @@ async function createToken() {
 
 	const signin = await axios({
 		method: "post",
-		url: `${process.env.BASE_URL}/auth/signin`,
+		url: `${BASE_URL}/auth/signin`,
 		data: {
 			auth_type: "header",
 			email: process.env.EMAIL,
