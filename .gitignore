@@ -1,6 +1,7 @@
 node_modules/
 src/settings.json
 build/
+src/data/items/*
 
 .env
 token_data.json

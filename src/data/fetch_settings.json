@@ -1,0 +1,23 @@
+[
+	{
+		"id": "Chipper",
+		"name": "Chipper",
+		"selector": "Chipper",
+		"price": 30
+	},
+	{
+		"id": "New_Loka",
+		"name": "New Loka",
+		"selector": "NewLoka"
+	},
+	{
+		"id": "The_Perrin_Sequence",
+		"name": "The Perrin Sequence",
+		"selector": "ThePerrinSequence"
+	},
+	{
+		"id": "Red_Veil",
+		"name": "Red Veil",
+		"selector": "RedVeil"
+	}
+]

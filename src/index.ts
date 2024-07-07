@@ -1,19 +1,30 @@
-require("dotenv").config();
 import axios from "axios";
 import inquirer from "inquirer";
 import inquirerPrompt from "inquirer-autocomplete-prompt";
-import fuzzy from "fuzzy";
-import { items } from "./data/items.json";
-import {
-	CHIPPER,
-	NEW_LOKA,
-	RED_VEIL,
-	THE_PERRIN_SEQUENCE,
-	ARBITERS_OF_HEXIS,
-} from "./data/mods.json";
+
+import fetchSettings from "./data/fetch_settings.json";
+import Chipper from "./data/items/Chipper.json";
+import New_Loka from "./data/items/New_Loka.json";
+import Red_Veil from "./data/items/Red_Veil.json";
+import The_Perrin_Sequence from "./data/items/The_Perrin_Sequence.json";
+
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
 import { existsSync, writeFileSync } from "fs";
+
+type Items = Array<{
+	item_name: string;
+	url_name: string;
+	id: string;
+	price?: number;
+}>;
+
+const items: Items = [
+	...Chipper,
+	...New_Loka,
+	...Red_Veil,
+	...The_Perrin_Sequence,
+];
 
 const BASE_URL = "https://api.warframe.market/v1";
 
@@ -23,232 +34,152 @@ type TokenData = {
 };
 let tokenData: TokenData;
 
-(async () => {
-	const tokenFile = resolve(__dirname, "./data/token_data.json");
+const tokenFile = resolve(__dirname, "./data/token_data.json");
 
-	if (existsSync(tokenFile)) {
-		tokenData = require("./data/token_data.json");
-	} else {
-		const initialData = {
-			authorization: "",
-			username: "",
-		};
-		writeFileSync(tokenFile, JSON.stringify(initialData, null, 2));
-		await createToken();
-		process.exit(0);
-	}
-
-	console.clear();
-	// ? Utils
-	const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-	inquirer.registerPrompt("autocomplete", inquirerPrompt);
-	const removeDuplicates = (array: string[]) => {
-		return array.filter((item, index) => array.indexOf(item) === index);
+if (existsSync(tokenFile)) {
+	tokenData = require("./data/token_data.json");
+} else {
+	const initialData = {
+		authorization: "",
+		username: "",
 	};
+	writeFileSync(tokenFile, JSON.stringify(initialData, null, 2));
+	await createToken();
+	process.exit(0);
+}
 
-	const { todo } = await inquirer.prompt({
-		type: "confirm",
-		message: "Do you want to search mods?",
-		name: "todo",
+console.clear();
+// ? Utils
+const timer = (ms: number) => new Promise((res) => setTimeout(res, ms));
+inquirer.registerPrompt("autocomplete", inquirerPrompt);
+const removeDuplicates = (array: Items) => {
+	return array.filter((item, index) => array.indexOf(item) === index);
+};
+
+const choices = fetchSettings.map((item) => {
+	return {
+		name: item.name,
+		value: item.id,
+	};
+});
+
+const { syndicates } = await inquirer.prompt({
+	type: "checkbox",
+	message: "Select Syndicates",
+	name: "syndicates",
+	choices,
+});
+
+// ? Create manager
+const market = axios.create({
+	baseURL: BASE_URL,
+	timeout: 1000,
+	headers: {
+		"content-type": "application/json",
+		accept: "application/json",
+		platform: "pc",
+		language: "en",
+		authorization: tokenData.authorization,
+	},
+});
+
+// ! Decide what to show on website
+let modsToAdd: any[] = [];
+if (syndicates.includes("Chipper")) {
+	modsToAdd = modsToAdd.concat(Chipper.map((mod) => mod.id));
+	console.log(
+		`✨ Added \x1b[33m${Chipper.length}\x1b[32m Chipper\x1b[0m mods to the queue!`,
+	);
+}
+if (syndicates.includes("New_Loka")) {
+	modsToAdd = modsToAdd.concat(New_Loka.map((mod) => mod.id));
+	console.log(
+		`✨ Added \x1b[33m${New_Loka.length}\x1b[32m New Loka\x1b[0m mods to the queue!`,
+	);
+}
+if (syndicates.includes("Red_Veil")) {
+	modsToAdd = modsToAdd.concat(Red_Veil.map((mod) => mod.id));
+	console.log(
+		`✨ Added \x1b[33m${Red_Veil.length}\x1b[31m Red Veil\x1b[0m mods to the queue!`,
+	);
+}
+if (syndicates.includes("The_Perrin_Sequence")) {
+	modsToAdd = modsToAdd.concat(The_Perrin_Sequence.map((mod) => mod.id));
+	console.log(
+		`✨ Added \x1b[33m${The_Perrin_Sequence.length}\x1b[36m The Perrin Sequence\x1b[0m mods to the queue!`,
+	);
+}
+
+modsToAdd = removeDuplicates(modsToAdd);
+const syndiArray = [
+	...Chipper.map((el) => el.id),
+	...New_Loka.map((el) => el.id),
+	...Red_Veil.map((el) => el.id),
+	...The_Perrin_Sequence.map((el) => el.id),
+];
+console.log(`\n- Preparing finished! -\n`);
+
+// ! remove every thing
+const orders = await market
+	.get(`profile/${tokenData.username}/orders`)
+	.then((orders) => {
+		return orders.data.payload.sell_orders;
+	})
+	.catch(async (err) => {
+		await createToken();
 	});
 
-	console.clear();
-	if (todo) {
-		const array = removeDuplicates([
-			...CHIPPER.map((a) => a.item_name),
-			...NEW_LOKA.map((a) => a.item_name),
-			...RED_VEIL.map((a) => a.item_name),
-			...THE_PERRIN_SEQUENCE.map((a) => a.item_name),
-			...ARBITERS_OF_HEXIS.map((a) => a.item_name),
-		]);
-
-		const searchAlgorithm = (answers, input = "") => {
-			return new Promise((resolve) => {
-				setTimeout(() => {
-					resolve(fuzzy.filter(input, array).map((el) => el.original));
-				}, Math.random() * 470 + 30);
+for (const order of orders) {
+	if (syndiArray.includes(order.item.id)) {
+		await timer(Number(process.env.DELAY));
+		console.log("❌ " + order.item.en.item_name + " \x1b[31mdeleted\x1b[0m!");
+		const del = async () => {
+			await market.delete("profile/orders/" + order.id).catch(async (err) => {
+				console.log(err.response.status);
+				if (err.response.status === 401) {
+					await createToken();
+				}
+				setTimeout(async () => {
+					await del();
+				}, 1000);
+				console.log("failed 503 and retrying");
 			});
 		};
-
-		const searchMods = async () => {
-			const { mod } = await inquirer.prompt({
-				// @ts-ignore
-				type: "autocomplete",
-				name: "mod",
-				message: "Mod name:",
-				source: searchAlgorithm,
+		del();
+	}
+}
+console.log(`\n- Deleting finished! -\n`);
+// ? Add new cards
+for (const mod of modsToAdd) {
+	await timer(Number(process.env.DELAY));
+	console.log(
+		"✅ " +
+			items.find((item) => item.id === mod)?.item_name +
+			" \x1b[32madded\x1b[0m!",
+	);
+	const add = async () => {
+		await market
+			.post("/profile/orders", {
+				order_type: "sell",
+				item_id: mod,
+				platinum: items.find((item) => item.id === mod)?.price || process.env.PRICE,
+				visible: true,
+				quantity: 7,
+				rank: 0,
+			})
+			.catch(async (err) => {
+				if (err.response.status === 401) {
+					await createToken();
+				}
+				setTimeout(async () => {
+					await add();
+				}, 1000);
+				console.log("failed 503 and retrying");
 			});
-
-			console.clear();
-			const syndis: string[] = [];
-			console.log("\n\x1b[33mMod is available in:\x1b[0m\n");
-			if (CHIPPER.find((m) => m.item_name === mod))
-				syndis.push("\x1b[32mChipper\x1b[0m");
-			if (NEW_LOKA.find((m) => m.item_name === mod))
-				syndis.push("\x1b[32mNew Loka\x1b[0m");
-			if (RED_VEIL.find((m) => m.item_name === mod))
-				syndis.push("\x1b[31mRed Veil\x1b[0m");
-			if (THE_PERRIN_SEQUENCE.find((m) => m.item_name === mod))
-				syndis.push("\x1b[36mThe Perrin Sequence\x1b[0m");
-			if (ARBITERS_OF_HEXIS.find((m) => m.item_name === mod))
-				syndis.push("\x1b[33mArbiters Of Hexis\x1b[0m");
-			console.log(syndis.join(" - "));
-			console.log("\n");
-			searchMods();
-		};
-
-		searchMods();
-
-		return;
-	}
-
-	const { syndicates } = await inquirer.prompt({
-		type: "checkbox",
-		message: "Select Syndicates",
-		name: "syndicates",
-		choices: [
-			{
-				name: "Chipper",
-				value: "CHIPPER",
-			},
-			{
-				name: "New LOKA",
-				value: "NEW_LOKA",
-			},
-			{
-				name: "Red Veil",
-				value: "RED_VEIL",
-			},
-			{
-				name: "The Perrin Sequence",
-				value: "THE_PERRIN_SEQUENCE",
-			},
-			{
-				name: "Arbiters Of Hexis",
-				value: "ARBITERS_OF_HEXIS",
-			},
-		],
-	});
-
-	// ? Create manager
-	const market = axios.create({
-		baseURL: BASE_URL,
-		timeout: 1000,
-		headers: {
-			"content-type": "application/json",
-			accept: "application/json",
-			platform: "pc",
-			language: "en",
-			authorization: tokenData.authorization,
-		},
-	});
-
-	// ! Decide what to show on website
-	let modsToAdd: string[] = [];
-	if (syndicates.includes("CHIPPER")) {
-		modsToAdd = modsToAdd.concat(CHIPPER.map((mod) => mod.id));
-		console.log(
-			`✨ Added \x1b[33m${CHIPPER.length}\x1b[32m Chipper\x1b[0m mods to the queue!`,
-		);
-	}
-	if (syndicates.includes("NEW_LOKA")) {
-		modsToAdd = modsToAdd.concat(NEW_LOKA.map((mod) => mod.id));
-		console.log(
-			`✨ Added \x1b[33m${NEW_LOKA.length}\x1b[32m New Loka\x1b[0m mods to the queue!`,
-		);
-	}
-	if (syndicates.includes("RED_VEIL")) {
-		modsToAdd = modsToAdd.concat(RED_VEIL.map((mod) => mod.id));
-		console.log(
-			`✨ Added \x1b[33m${RED_VEIL.length}\x1b[31m Red Veil\x1b[0m mods to the queue!`,
-		);
-	}
-	if (syndicates.includes("THE_PERRIN_SEQUENCE")) {
-		modsToAdd = modsToAdd.concat(THE_PERRIN_SEQUENCE.map((mod) => mod.id));
-		console.log(
-			`✨ Added \x1b[33m${THE_PERRIN_SEQUENCE.length}\x1b[36m The Perrin Sequence\x1b[0m mods to the queue!`,
-		);
-	}
-	if (syndicates.includes("ARBITERS_OF_HEXIS")) {
-		modsToAdd = modsToAdd.concat(ARBITERS_OF_HEXIS.map((mod) => mod.id));
-		console.log(
-			`✨ Added \x1b[33m${ARBITERS_OF_HEXIS.length}\x1b[33m Arbiters Of Hexis\x1b[0m mods to the queue!`,
-		);
-	}
-
-	modsToAdd = removeDuplicates(modsToAdd);
-	const syndiArray = [
-		...CHIPPER.map((el) => el.id),
-		...NEW_LOKA.map((el) => el.id),
-		...RED_VEIL.map((el) => el.id),
-		...THE_PERRIN_SEQUENCE.map((el) => el.id),
-		...ARBITERS_OF_HEXIS.map((el) => el.id),
-	];
-	console.log(`\n- Preparing finished! -\n`);
-
-	// ! remove every thing
-	const orders = await market
-		.get(`profile/${tokenData.username}/orders`)
-		.then((orders) => {
-			return orders.data.payload.sell_orders;
-		})
-		.catch(async (err) => {
-			await createToken();
-		});
-
-	for (const order of orders) {
-		if (syndiArray.includes(order.item.id)) {
-			await timer(process.env.DELAY);
-			console.log("❌ " + order.item.en.item_name + " \x1b[31mdeleted\x1b[0m!");
-			const del = async () => {
-				await market.delete("profile/orders/" + order.id).catch(async (err) => {
-					console.log(err.response.status);
-					if (err.response.status === 401) {
-						await createToken();
-					}
-					setTimeout(async () => {
-						await del();
-					}, 1000);
-					console.log("failed 503 and retrying");
-				});
-			};
-			del();
-		}
-	}
-	console.log(`\n- Deleting finished! -\n`);
-	// ? Add new cards
-	for (const mod of modsToAdd) {
-		await timer(process.env.DELAY);
-		console.log(
-			"✅ " +
-				items.find((item) => item.id === mod)?.item_name +
-				" \x1b[32madded\x1b[0m!",
-		);
-		const add = async () => {
-			await market
-				.post("/profile/orders", {
-					order_type: "sell",
-					item_id: mod,
-					platinum:
-						items.find((item) => item.id === mod)?.price || process.env.PRICE,
-					visible: true,
-					quantity: 7,
-					rank: 0,
-				})
-				.catch(async (err) => {
-					if (err.response.status === 401) {
-						await createToken();
-					}
-					setTimeout(async () => {
-						await add();
-					}, 1000);
-					console.log("failed 503 and retrying");
-				});
-		};
-		add();
-	}
-	console.log(`\n- Adding finished! -\n`);
-})();
+	};
+	add();
+}
+console.log(`\n- Adding finished! -\n`);
 
 async function createToken() {
 	console.log(

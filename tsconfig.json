@@ -1,19 +1,27 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-		"moduleResolution": "Node",
-		"target": "ES6",
-		"outDir": "./build",
+		// Enable latest features
+		"lib": ["ESNext", "DOM"],
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleDetection": "force",
+		"jsx": "react-jsx",
+		"allowJs": true,
+
+		// Bundler mode
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"noEmit": true,
+
+		// Best practices
 		"strict": true,
-		"noImplicitAny": false,
-		"removeComments": true,
-		"esModuleInterop": true,
-		"experimentalDecorators": true,
-		"resolveJsonModule": true,
-		"emitDecoratorMetadata": true,
-		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
-		"skipDefaultLibCheck": true,
-		"noUnusedLocals": false
+		"noFallthroughCasesInSwitch": true
+
+		// Some stricter flags (disabled by default)
+		// "noUnusedLocals": false,
+		// "noUnusedParameters": false,
+		// "noPropertyAccessFromIndexSignature": false
 	}
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authorization, username } from "./data/token_data.json";
+import { authorization, username } from "../data/token_data.json";
 
 const BASE_URL = "https://api.warframe.market/v1";
 

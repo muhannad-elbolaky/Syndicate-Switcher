@@ -4,13 +4,17 @@
 	"license": "MIT",
 	"author": "MajorAmari",
 	"scripts": {
-		"start": "bun run src/index.ts"
+		"start": "bun run src/index.ts",
+		"refresh": "bun run src/scripts/refresh.ts",
+		"scrape": "bun run src/scripts/scrape.ts"
 	},
 	"dependencies": {
 		"axios": "^0.26.1",
-		"dotenv": "^16.0.1",
-		"fuzzy": "^0.1.3",
 		"inquirer": "^8.2.2",
-		"inquirer-autocomplete-prompt": "^2.0.0"
+		"inquirer-autocomplete-prompt": "^2.0.0",
+		"playwright-firefox": "^1.45.1"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.1.6"
 	}
 }
