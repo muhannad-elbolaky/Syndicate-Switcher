@@ -45,7 +45,7 @@ const delay = async (ms: number) => {
 			}
 
 			console.log("===============");
-		}, 3 * 60 * 1000);
+		}, 1 * 60 * 1000);
 	} catch (error) {
 		console.error("Error fetching orders:", error);
 	}

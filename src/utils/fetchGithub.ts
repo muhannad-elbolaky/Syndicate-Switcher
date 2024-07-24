@@ -16,7 +16,7 @@ export const fetchGithub = async (
 
 		console.log(
 			`${response.data.i18n.en.item_name} ${
-				response.data.tags.includes("mod") ? "✔️" : "❌"
+				response.data.tags.includes("mod") ? "✅" : "❌"
 			}`,
 		);
 

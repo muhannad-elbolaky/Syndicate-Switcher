@@ -44,6 +44,8 @@ if (existsSync(tokenFile)) {
 		username: "",
 	};
 	writeFileSync(tokenFile, JSON.stringify(initialData, null, 2));
+	console.log("D create token");
+
 	await createToken();
 	process.exit(0);
 }
@@ -126,6 +128,8 @@ const orders = await market
 		return orders.data.payload.sell_orders;
 	})
 	.catch(async (err) => {
+		console.log("A create token", err);
+
 		await createToken();
 	});
 
@@ -137,6 +141,8 @@ for (const order of orders) {
 			await market.delete("profile/orders/" + order.id).catch(async (err) => {
 				console.log(err.response.status);
 				if (err.response.status === 401) {
+					console.log("B create token");
+
 					await createToken();
 				}
 				setTimeout(async () => {
@@ -169,6 +175,8 @@ for (const mod of modsToAdd) {
 			})
 			.catch(async (err) => {
 				if (err.response.status === 401) {
+					console.log("C create token");
+
 					await createToken();
 				}
 				setTimeout(async () => {
