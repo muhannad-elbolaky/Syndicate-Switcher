@@ -4,7 +4,18 @@ import { formatNames } from "../utils/formatNames";
 import { filterItems } from "../utils/filterItems";
 import { delay } from "../utils/delay";
 
-for (const standing of fetchSettings) {
+type Standing = [
+	{
+		id: string;
+		name: string;
+		selector: string;
+		price: number;
+	},
+];
+
+const fetchSettingsTyped = fetchSettings as Standing;
+
+for (const standing of fetchSettingsTyped) {
 	// ? Launch the browser and create context
 	const browser = await firefox.launch({
 		headless: process.env.IS_HEADLESS === "true" ? true : false,
