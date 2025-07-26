@@ -3,21 +3,24 @@
 		"id": "Chipper",
 		"name": "Chipper",
 		"selector": "Chipper",
-		"price": 40
+		"price": 35
 	},
 	{
 		"id": "New_Loka",
 		"name": "New Loka",
-		"selector": "NewLoka"
+		"selector": "NewLoka",
+    "price": 17
 	},
 	{
 		"id": "The_Perrin_Sequence",
 		"name": "The Perrin Sequence",
-		"selector": "ThePerrinSequence"
+		"selector": "ThePerrinSequence",
+    "price": 17
 	},
 	{
 		"id": "Red_Veil",
 		"name": "Red Veil",
-		"selector": "RedVeil"
+		"selector": "RedVeil",
+    "price": 15
 	}
 ]
